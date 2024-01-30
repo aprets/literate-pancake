@@ -38,10 +38,10 @@ jobs:
                 owner,
                 repo,
                 branch,
-                enforce_admins: currentBranchProtection.enforce_admins,
+                enforce_admins: currentBranchProtection.enforce_admins?.enabled ?? false,
                 required_pull_request_reviews:
-                  currentBranchProtection.required_pull_request_reviews,
-                required_status_checks: currentBranchProtection.required_status_checks,
+                  currentBranchProtection.required_pull_request_reviews ?? null,
+                required_status_checks: currentBranchProtection.required_status_checks ?? null,
                 restrictions: enable_restrictions
                   ? {
                       users: [],
@@ -60,6 +60,7 @@ jobs:
                 await updateBranchEnforceAdmins(repo, 'development', false);
               }
             }
+            
 
 
 
