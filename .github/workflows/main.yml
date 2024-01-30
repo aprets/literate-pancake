@@ -33,7 +33,7 @@ jobs:
                   repo,
                   branch,
                 });
-              await github.rest.repos.setAdminBranchProtection({
+              await github.rest.repos.updateBranchProtection({
                 owner,
                 repo,
                 branch,
