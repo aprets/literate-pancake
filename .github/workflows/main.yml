@@ -33,6 +33,7 @@ jobs:
                   repo,
                   branch,
                 });
+              console.dir(currentBranchProtection)
               await github.rest.repos.updateBranchProtection({
                 owner,
                 repo,
@@ -59,6 +60,7 @@ jobs:
                 await updateBranchEnforceAdmins(repo, 'development', false);
               }
             }
+
 
 
             
