@@ -1,0 +1,57 @@
+name: Branch Protection Rules
+on:
+  workflow_dispatch:
+  schedule: 
+    - cron: '0 17 * * 2' # This will run at 17:00 GMT every Tuesday
+    - cron: '0 17 * * 3' # This will run at 17:00 GMT every Wednesday 
+    - cron: '0 17 * * 4' # This will run at 17:00 GMT every Friday
+
+jobs:
+  protect_branch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set branch protection
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.SECRET }}
+          script: |
+            const dayOfWeek = new Date().getDay();
+            const isTuesday = dayOfWeek === 2;
+            const isWednesday = dayOfWeek === 3;
+            
+            const repos = [
+              'aprets/literate-pancake'
+            ]
+            
+            async function updateBranchEnforceAdmins(repo, branch, enforce_admins) {
+              await github.request(
+                `PUT /repos/${repo}/branches/${branch}/protection`,
+                {
+                  // required_status_checks: null,
+                  enforce_admins: enforce_admins,
+                  // required_pull_request_reviews: {
+                  //   dismissal_restrictions: {},
+                  //   dismiss_stale_reviews: true,
+                  // },
+                  // restrictions: {
+                  //   users: [],
+                  //   teams: [],
+                  // },
+                }
+              );
+            }
+            
+            if (isTuesday) {
+              for (const repo of repos) {
+                await updateBranchEnforceAdmins(repo, 'development', true);
+              }
+            } else if (isWednesday) {
+              for (const repo of repos) {
+                await updateBranchEnforceAdmins(repo, 'development', false);
+              }
+            }
+
+            
